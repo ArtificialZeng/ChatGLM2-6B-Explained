@@ -20,7 +20,7 @@ ChatGLM2-6B-相关代码，逐行详解版。
 # CSDN彩色博客版：
 * [xxx/](./ChatGLM-Efficient-Tuning-Explained/src)
   * [xxx/](./ChatGLM-Efficient-Tuning-Explained/src/utils)
-    * [main.py](./ptuning/main.py)(https://zengxiaojian.blog.csdn.net/article/details/131617133?spm=1001.2014.3001.5502)
+    * [CSDN彩色源码解析main.py(一)](https://zengxiaojian.blog.csdn.net/article/details/131617133?spm=1001.2014.3001.5502)
     * [xxx.py](./ChatGLM-Efficient-Tuning-Explained/src/utils/peft_trainer.py)
 * [README.md](./ChatGLM-Efficient-Tuning-Explained/README.md)
 
