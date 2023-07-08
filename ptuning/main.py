@@ -1,3 +1,5 @@
+# CSDN彩色版：  
+
 #!/usr/bin/env python
 # coding=utf-8
 # Copyright 2021 The HuggingFace Team. All rights reserved.
@@ -24,12 +26,14 @@ import sys
 import json
 
 import numpy as np
-from datasets import load_dataset
+from datasets import load_dataset  #从 Hugging Face 的 datasets 库中导入 load_dataset 函数，用于加载各种预处理后的数据集。
 import jieba 
-from rouge_chinese import Rouge
-from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
+from rouge_chinese import Rouge  #从 rouge_chinese 模块中导入 Rouge 类，这个类可以用来计算 Rouge 分数，它是一种用来评估机器生成文本（如机器翻译或文本摘要）与人类参考文本之间相似度的指标。
+from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction  #从 nltk.translate.bleu_score 模块中导入 sentence_bleu 和 SmoothingFunction。sentence_bleu 是用来计算单个句子的 BLEU 分数的函数，
+#而 SmoothingFunction 是用来处理BLEU分数计算过程中出现的0分情况。
 import torch
 
+#导入了 transformers 库及其一些子模块。transformers 库提供了许多预训练的神经网络模型，可以用于各种自然语言处理任务。
 import transformers
 from transformers import (
     AutoConfig,
@@ -40,33 +44,39 @@ from transformers import (
     Seq2SeqTrainingArguments,
     set_seed,
 )
+#从 trainer_seq2seq 模块导入 Seq2SeqTrainer 类，这个类是用来训练序列到序列（seq2seq）模型的。
 from trainer_seq2seq import Seq2SeqTrainer
 
-from arguments import ModelArguments, DataTrainingArguments
+from arguments import ModelArguments, DataTrainingArguments #这行代码从 arguments 模块导入了两个类，这两个类用于解析和处理命令行参数。
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  #创建一个记录器（logger），这个记录器可以用来记录脚本的运行情况。
 
 def main():
-    parser = HfArgumentParser((ModelArguments, DataTrainingArguments, Seq2SeqTrainingArguments))
-    if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
+    parser = HfArgumentParser((ModelArguments, DataTrainingArguments, Seq2SeqTrainingArguments))  #创建一个 HfArgumentParser 对象，它将解析和处理 ModelArguments、DataTrainingArguments 和 Seq2SeqTrainingArguments 这三个类的实例。
+    if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):  #检查脚本的命令行参数是否为一个 .json 文件。如果是，那么将会从这个文件中读取参数。
         # If we pass only one argument to the script and it's the path to a json file,
         # let's parse it to get our arguments.
+        #读取 .json 文件中的参数，并将其分别赋值给 model_args、data_args 和 training_args。
         model_args, data_args, training_args = parser.parse_json_file(json_file=os.path.abspath(sys.argv[1]))
     else:
+        #如果命令行参数不是一个 .json 文件，那么这行代码将会直接从命令行参数中解析出参数。
         model_args, data_args, training_args = parser.parse_args_into_dataclasses()
 
     # Setup logging
+    #设置日志的基础配置，包括日志的格式、日期格式以及处理器。
     logging.basicConfig(
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
         datefmt="%m/%d/%Y %H:%M:%S",
         handlers=[logging.StreamHandler(sys.stdout)],
     )
-
+    
+    #如果 training_args.should_log 为真（即需要记录日志），那么设置日志等级为 info。
     if training_args.should_log:
         # The default of training_args.log_level is passive, so we set log level at info here to have that default.
         transformers.utils.logging.set_verbosity_info()
 
     log_level = training_args.get_process_log_level()
+    #设置 logger 的日志等级。
     logger.setLevel(log_level)
     # datasets.utils.logging.set_verbosity(log_level)
     transformers.utils.logging.set_verbosity(log_level)
