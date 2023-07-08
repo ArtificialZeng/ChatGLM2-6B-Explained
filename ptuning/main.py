@@ -1,4 +1,5 @@
-# CSDN彩色版：  
+# CSDN彩色版：
+#ChatGLM2-6B源码解析./ptuning/main.py （一）  https://zengxiaojian.blog.csdn.net/article/details/131617133?spm=1001.2014.3001.5502
 
 #!/usr/bin/env python
 # coding=utf-8
