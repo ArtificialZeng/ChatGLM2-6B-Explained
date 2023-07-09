@@ -1,7 +1,7 @@
 # ChatGLM2-6B-Explained
 
-ChatGLM2-6B-相关代码，逐行详解版。
-逐步更新，欢迎大家Star，Fork，参与进来，提交PR。 
+ChatGLM2-6B-相关代码，逐行详解版。  
+逐步更新，欢迎大家Star，Fork，参与进来，提交PR。   
 注：xxx表示伪目录，非有效。
 
 # ChatGLM2-6B-Explained
