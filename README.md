@@ -7,13 +7,13 @@ ChatGLM2-6B-相关代码，逐行详解版。
 
 
 
-* [xxx/](./src)
-  * [xxx/](./src/utils)
+* [x/](./src)
+  * [x/](./src/utils)
     * [main.py](./ptuning/main.py)
-    * [xxx.py](./src/utils/peft_trainer.py) 
-  * [xxx.py](./src/train_sft.py)
-* [xxx/](./examples)
-  * [xxx.md](./examples/ads_generation.md)
+    * [x.py](./src/utils/peft_trainer.py) 
+  * [x.py](./src/train_sft.py)
+* [x/](./examples)
+  * [x.md](./examples/ads_generation.md)
 * [README.md](./README.md)
 
 
