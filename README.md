@@ -10,7 +10,7 @@ ChatGLM2-6B-相关代码，逐行详解版。
 * [x/](./src)
   * [x/](./src/utils)
     * [main.py](./ptuning/main.py)
-    * [x.py](./src/utils/peft_trainer.py) 
+    * [train.sh参数解释](./ptuning/train.sh) 
   * [x.py](./src/train_sft.py)
 * [x/](./examples)
   * [x.md](./examples/ads_generation.md)
