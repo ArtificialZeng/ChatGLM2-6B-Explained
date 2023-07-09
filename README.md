@@ -19,7 +19,7 @@ ChatGLM2-6B-相关代码，逐行详解版。
 
 
 # CSDN彩色博客版：
-* [ChatGLM1/2 系列源码解析系列-专栏地址](https://mp.csdn.net/mp_blog/manage/column/columnManage/12365053) 
+* [ChatGLM1/2 系列源码解析系列-专栏地址](https://blog.csdn.net/sinat_37574187/category_12365053.html) 
   * [xxx/](./ChatGLM-Efficient-Tuning-Explained/src/utils)
     * [CSDN彩色源码解析main.py(一)](https://zengxiaojian.blog.csdn.net/article/details/131617133?spm=1001.2014.3001.5502)
     * [CSDN彩色源码解析main.py(二)](https://blog.csdn.net/sinat_37574187/article/details/131621397)
