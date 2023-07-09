@@ -37,14 +37,15 @@ import torch
 #导入了 transformers 库及其一些子模块。transformers 库提供了许多预训练的神经网络模型，可以用于各种自然语言处理任务。
 import transformers
 from transformers import (
-    AutoConfig,
-    AutoModel,
-    AutoTokenizer,
-    DataCollatorForSeq2Seq,
-    HfArgumentParser,
-    Seq2SeqTrainingArguments,
-    set_seed,
+    AutoConfig,  #用于自动从预训练模型的名字或路径获取模型的配置信息。
+    AutoModel,  #用于自动加载一个预训练模型。这个方法将根据模型的名字或路径自动选择正确的模型类，并加载模型。
+    AutoTokenizer,  #用于自动加载一个预训练模型的tokenizer。这个方法将根据模型的名字或路径自动选择正确的tokenizer类，并加载tokenizer。
+    DataCollatorForSeq2Seq,  #用于序列到序列（seq2seq）模型的数据收集。这个类负责将多个数据样本收集到一起，形成一个batch，供模型进行训练或评估。
+    HfArgumentParser,  #用于解析命令行参数的工具。该工具是为了更好地与Hugging Face库（transformers库的开发者）的其他工具集成。
+    Seq2SeqTrainingArguments,  #用于设置序列到序列模型的训练参数。
+    set_seed,  #用于设置随机种子，以确保实验的可重复性。
 )
+
 #从 trainer_seq2seq 模块导入 Seq2SeqTrainer 类，这个类是用来训练序列到序列（seq2seq）模型的。
 from trainer_seq2seq import Seq2SeqTrainer
 
