@@ -225,22 +225,23 @@ def main():
                 model_inputs["labels"].append(labels)  #在处理完所有样例后，返回model_inputs字典，它包含了所有样例的输入和标签，可以直接用于模型的训练。
 
         return model_inputs
-    
-    def print_dataset_example(example):
+
+    #这段代码主要是用来处理训练、验证和测试数据集，使其适应模型训练和预测的需要。下面来逐行解释：
+    def print_dataset_example(example):  #定义一个函数print_dataset_example(example)，它用于打印给定样例的输入和标签，以及它们对应的文本形式。
         print("input_ids", example["input_ids"])
         print("inputs", tokenizer.decode(example["input_ids"]))
         print("label_ids", example["labels"])
         print("labels", tokenizer.decode(example["labels"]))
 
-    if training_args.do_train:
-        if "train" not in raw_datasets:
+    if training_args.do_train:  #如果需要进行训练。
+        if "train" not in raw_datasets:  #检查原始数据集中是否存在训练数据集，如果不存在，则抛出错误。
             raise ValueError("--do_train requires a train dataset")
-        train_dataset = raw_datasets["train"]
-        if data_args.max_train_samples is not None:
-            max_train_samples = min(len(train_dataset), data_args.max_train_samples)
-            train_dataset = train_dataset.select(range(max_train_samples))
-        with training_args.main_process_first(desc="train dataset map pre-processing"):
-            train_dataset = train_dataset.map(
+        train_dataset = raw_datasets["train"]  #获取训练数据集。
+        if data_args.max_train_samples is not None:  #如果设置了训练样本的最大数量。
+            max_train_samples = min(len(train_dataset), data_args.max_train_samples)  #计算实际使用的训练样本的数量，为原始训练样本数量和最大训练样本数量中的较小者。
+            train_dataset = train_dataset.select(range(max_train_samples))  #选择所需数量的训练样本。
+        with training_args.main_process_first(desc="train dataset map pre-processing"):  #主要是为了确保主进程在所有其他进程之前运行。
+            train_dataset = train_dataset.map(  #应用预处理函数到训练数据集上，预处理函数就是前面定义的preprocess_function_train。
                 preprocess_function_train,
                 batched=True,
                 num_proc=data_args.preprocessing_num_workers,
@@ -248,17 +249,17 @@ def main():
                 load_from_cache_file=not data_args.overwrite_cache,
                 desc="Running tokenizer on train dataset",
             )
-        print_dataset_example(train_dataset[0])
+        print_dataset_example(train_dataset[0])  #打印处理后的第一个训练样例。
 
-    if training_args.do_eval:
-        max_target_length = data_args.val_max_target_length
+    if training_args.do_eval:  #首先检查是否需要对模型进行评估。do_eval是一个布尔值，如果为True，那么这段代码会对验证集进行预处理并进行模型评估。
+        max_target_length = data_args.val_max_target_length  #设定了目标序列的最大长度。这是为了处理可能存在的长度不一致问题。
         if "validation" not in raw_datasets:
-            raise ValueError("--do_eval requires a validation dataset")
-        eval_dataset = raw_datasets["validation"]
-        if data_args.max_eval_samples is not None:
-            max_eval_samples = min(len(eval_dataset), data_args.max_eval_samples)
-            eval_dataset = eval_dataset.select(range(max_eval_samples))
-        with training_args.main_process_first(desc="validation dataset map pre-processing"):
+            raise ValueError("--do_eval requires a validation dataset")  #检查原始数据集中是否包含验证集。如果不包含，那么将会引发一个错误。
+        eval_dataset = raw_datasets["validation"]  #从原始数据集中提取验证数据。
+        if data_args.max_eval_samples is not None:  #检查是否设定了最大的验证样本数量。如果设定了，那么就按照这个数量来选择样本。
+            max_eval_samples = min(len(eval_dataset), data_args.max_eval_samples)  #根据验证集的长度和预设的最大验证样本数量选择实际使用的样本数量。
+            eval_dataset = eval_dataset.select(range(max_eval_samples))  #从验证集中选取一定数量的样本进行预处理和评估。
+        with training_args.main_process_first(desc="validation dataset map pre-processing"):  #接下来的部分用于实际的数据预处理：通过调用.map()函数，使用先前定义的preprocess_function_eval函数对验证数据集进行预处理。
             eval_dataset = eval_dataset.map(
                 preprocess_function_eval,
                 batched=True,
@@ -267,7 +268,7 @@ def main():
                 load_from_cache_file=not data_args.overwrite_cache,
                 desc="Running tokenizer on validation dataset",
             )
-        print_dataset_example(eval_dataset[0])
+        print_dataset_example(eval_dataset[0])  #这一行输出经过预处理后的第一个验证样本，以便检查预处理是否正确进行。
 
     if training_args.do_predict:
         max_target_length = data_args.val_max_target_length
