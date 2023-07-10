@@ -291,16 +291,19 @@ def main():
         print_dataset_example(predict_dataset[0])
 
     # Data collator
-    label_pad_token_id = -100 if data_args.ignore_pad_token_for_loss else tokenizer.pad_token_id
+    #这行代码设置了label的填充token ID。如果设置了在计算损失时忽略填充token（由data_args.ignore_pad_token_for_loss决定），那么填充token ID将被设为-100，否则填充token ID就是tokenizer的填充token ID。
+    label_pad_token_id = -100 if data_args.ignore_pad_token_for_loss else tokenizer.pad_token_id  
+    #这行代码创建了一个用于序列到序列任务的数据整理器（data collator）。数据整理器的作用是将一个批量的数据整理成可输入模型的形式。其中，tokenizer用于对文本进行编码，model是预训练模型，
     data_collator = DataCollatorForSeq2Seq(
         tokenizer,
         model=model,
-        label_pad_token_id=label_pad_token_id,
-        pad_to_multiple_of=None,
-        padding=False
+        label_pad_token_id=label_pad_token_id,  #label_pad_token_id是label的填充token ID，
+        pad_to_multiple_of=None,  #表示不需要将序列长度补齐到某个数的倍数，
+        padding=False  #padding=False表示在数据整理时不进行填充。
     )
 
     # Metric
+    #这个函数定义了如何计算评估指标。eval_preds是模型的预测结果和标签，函数首先将预测结果和标签从token IDs转化为文本，然后计算并返回各个评估指标（包括ROUGE和BLEU）的平均值。
     def compute_metrics(eval_preds):
         preds, labels = eval_preds
         if isinstance(preds, tuple):
@@ -334,6 +337,7 @@ def main():
         return score_dict
 
     # Override the decoding parameters of Seq2SeqTrainer
+    #这行代码设置了生成序列的最大长度。如果训练参数中设置了生成序列的最大长度，那么就使用该值，否则使用验证集目标序列的最大长度。
     training_args.generation_max_length = (
         training_args.generation_max_length
         if training_args.generation_max_length is not None
