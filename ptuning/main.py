@@ -79,21 +79,21 @@ def main():
 
     log_level = training_args.get_process_log_level()
     #设置 logger 的日志等级。
-    logger.setLevel(log_level)
-    # datasets.utils.logging.set_verbosity(log_level)
-    transformers.utils.logging.set_verbosity(log_level)
-    transformers.utils.logging.enable_default_handler()
-    transformers.utils.logging.enable_explicit_format()
+    logger.setLevel(log_level) #设置logger的级别，同时也设置了transformers.utils.logging的级别。这样能够控制要显示的日志信息的详细程度。
+    #datasets.utils.logging.set_verbosity(log_level)
+    transformers.utils.logging.set_verbosity(log_level) #这行代码设置了transformers包中logging模块的日志等级。这里设置的等级和上面获取的日志等级是一样的。
+    transformers.utils.logging.enable_default_handler() #
+    transformers.utils.logging.enable_explicit_format() #这两行代码是启用默认的日志处理器并启用显式的日志格式。默认处理器通常会将日志消息发送到控制台，显式格式则指定了日志消息的输出格式。
 
     # Log on each process the small summary:
-    logger.warning(
+    logger.warning(  #logger.warning和logger.info代码是打印关于训练过程的一些基本信息。这些信息包括训练过程的设备、分布式训练的设置、是否使用16位精度训练等。
         f"Process rank: {training_args.local_rank}, device: {training_args.device}, n_gpu: {training_args.n_gpu}"
         + f"distributed training: {bool(training_args.local_rank != -1)}, 16-bits training: {training_args.fp16}"
     )
     logger.info(f"Training/evaluation parameters {training_args}")
 
     # Set seed before initializing model.
-    set_seed(training_args.seed)
+    set_seed(training_args.seed)  #设置了随机种子，为了让实验在多次运行时具有相同的结果。
 
     # Load dataset
     data_files = {}
