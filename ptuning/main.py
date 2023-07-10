@@ -305,36 +305,36 @@ def main():
     # Metric
     #这个函数定义了如何计算评估指标。eval_preds是模型的预测结果和标签，函数首先将预测结果和标签从token IDs转化为文本，然后计算并返回各个评估指标（包括ROUGE和BLEU）的平均值。
     def compute_metrics(eval_preds):
-        preds, labels = eval_preds
-        if isinstance(preds, tuple):
+        preds, labels = eval_preds  #从输入的评估预测中提取预测值和标签。
+        if isinstance(preds, tuple):  #preds = preds[0] 如果预测值是一个元组，则只取第一个元素作为预测值。
             preds = preds[0]
-        decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
-        if data_args.ignore_pad_token_for_loss:
+        decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)  #使用 tokenizer 对预测的 token IDs 进行批量解码，转换为文本形式，并跳过特殊的 token。
+        if data_args.ignore_pad_token_for_loss:  #如果在计算损失时忽略了 pad token，则将标签中所有值为-100的元素（即原始的 pad token）替换为 tokenizer 的 pad token ID。
             # Replace -100 in the labels as we can't decode them.
             labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
-        decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
+        decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)  #使用 tokenizer 对标签的 token IDs 进行批量解码，转换为文本形式，并跳过特殊的 token。
 
-        score_dict = {
+        score_dict = {  #初始化一个字典，用于存储各个评估指标（包括rouge-1，rouge-2，rouge-l和bleu-4）的得分。
             "rouge-1": [],
             "rouge-2": [],
             "rouge-l": [],
             "bleu-4": []
         }
-        for pred, label in zip(decoded_preds, decoded_labels):
+        for pred, label in zip(decoded_preds, decoded_labels): #对每一个预测值和标签的配对进行遍历。
             hypothesis = list(jieba.cut(pred))
-            reference = list(jieba.cut(label))
+            reference = list(jieba.cut(label))  #hypothesis = list(jieba.cut(pred)) 和 reference = list(jieba.cut(label)) 使用 jieba 对预测和标签进行分词，生成假设和参考序列。
             rouge = Rouge()
-            scores = rouge.get_scores(' '.join(hypothesis) , ' '.join(reference))
+            scores = rouge.get_scores(' '.join(hypothesis) , ' '.join(reference)) #计算 ROUGE 得分。
             result = scores[0]
             
-            for k, v in result.items():
-                score_dict[k].append(round(v["f"] * 100, 4))
-            bleu_score = sentence_bleu([list(label)], list(pred), smoothing_function=SmoothingFunction().method3)
-            score_dict["bleu-4"].append(round(bleu_score * 100, 4))
+            for k, v in result.items():  # 对于每一个 ROUGE 指标（rouge-1，rouge-2，rouge-l），
+                score_dict[k].append(round(v["f"] * 100, 4))  #将 f-score 存入 score_dict。
+            bleu_score = sentence_bleu([list(label)], list(pred), smoothing_function=SmoothingFunction().method3)  #计算 BLEU 得分。
+            score_dict["bleu-4"].append(round(bleu_score * 100, 4))  #score_dict["bleu-4"].append(round(bleu_score * 100, 4)) 将 BLEU 得分存入 score_dict。
 
-        for k, v in score_dict.items():
+        for k, v in score_dict.items():  # 对于 score_dict 中的每一个指标，计算并存储其平均值。
             score_dict[k] = float(np.mean(v))
-        return score_dict
+        return score_dict  # 返回包含了各个评估指标平均得分的字典。
 
     # Override the decoding parameters of Seq2SeqTrainer
     #这行代码设置了生成序列的最大长度。如果训练参数中设置了生成序列的最大长度，那么就使用该值，否则使用验证集目标序列的最大长度。
