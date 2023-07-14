@@ -7,6 +7,7 @@ ChatGLM2-6B-相关代码，逐行详解版。
 ##
 这个项目主要是数据相关的流转，测试，还有p tuning v2相关微调。若是想弄懂大模型的原理，建议看[GLM-Explained](https://github.com/ArtificialZeng/GLM-Explained)
 
+此外，大模型还基于两个非常重要的基础库，那便是[transformers](https://github.com/ArtificialZeng/tranformers-expalined)，和[pytorch](https://github.com/ArtificialZeng/pytorch-explained)，同样这两个库也有关键代码的逐行解析版本。
 # ChatGLM2-6B-Explained
 
 
