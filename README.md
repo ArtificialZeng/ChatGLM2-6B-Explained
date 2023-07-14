@@ -4,6 +4,9 @@ ChatGLM2-6B-相关代码，逐行详解版。
 逐步更新，欢迎大家Star，Fork，参与进来，提交PR。   
 注：xxx表示伪目录，非有效。
 
+##
+这个项目主要是数据相关的流转，测试，还有p tuning v2相关微调。若是想弄懂大模型的原理，建议看[GLM-Explained](https://github.com/ArtificialZeng/GLM-Explained)
+
 # ChatGLM2-6B-Explained
 
 
