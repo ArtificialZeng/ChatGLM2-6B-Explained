@@ -1,29 +1,20 @@
-""" PyTorch ChatGLM model. """
-
-import math
-import copy
-import warnings
-import re
-import sys
-
-import torch
-import torch.utils.checkpoint
-import torch.nn.functional as F
-from torch import nn
-from torch.nn import CrossEntropyLoss, LayerNorm
-from torch.nn.utils import skip_init
-from typing import Optional, Tuple, Union, List, Callable, Dict, Any
+from torch.nn import CrossEntropyLoss, LayerNorm  # 从PyTorch的神经网络(nn)模块导入CrossEntropyLoss（损失函数）和LayerNorm（层标准化方法）
+from torch.nn.utils import skip_init  # 从PyTorch的神经网络的工具(nn.utils)模块导入skip_init，一种跳过权重初始化的实用函数
+from typing import Optional, Tuple, Union, List, Callable, Dict, Any  # 导入typing模块的子模块，用于定义变量、函数参数、返回值等的类型
 
 from transformers.modeling_outputs import (
     BaseModelOutputWithPast,
     CausalLMOutputWithPast,
-)
-from transformers.modeling_utils import PreTrainedModel
-from transformers.utils import logging
-from transformers.generation.logits_process import LogitsProcessor
-from transformers.generation.utils import LogitsProcessorList, StoppingCriteriaList, GenerationConfig, ModelOutput
+)  # 从Hugging Face的transformers库中的modeling_outputs模块导入BaseModelOutputWithPast和CausalLMOutputWithPast类
 
-from .configuration_chatglm import ChatGLMConfig
+from transformers.modeling_utils import PreTrainedModel  # 从Hugging Face的transformers库中的modeling_utils模块导入PreTrainedModel类，这是所有预训练模型的基类
+from transformers.utils import logging  # 从Hugging Face的transformers库中的utils模块导入logging，这是用于创建和配置日志的工具
+
+from transformers.generation.logits_process import LogitsProcessor  # 从Hugging Face的transformers库中的generation.logits_process模块导入LogitsProcessor类，这个类可以处理和修改模型生成过程中的logits
+from transformers.generation.utils import LogitsProcessorList, StoppingCriteriaList, GenerationConfig, ModelOutput  # 从Hugging Face的transformers库中的generation.utils模块导入四个类或接口
+
+from .configuration_chatglm import ChatGLMConfig  # 从当前目录下的configuration_chatglm模块导入ChatGLMConfig类，这是特定于ChatGLM模型的配置类
+
 
 # flags required to enable jit fusion kernels
 
