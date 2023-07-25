@@ -28,35 +28,36 @@ from transformers.generation.utils import LogitsProcessorList, StoppingCriteriaL
 from .configuration_chatglm import ChatGLMConfig  # 从当前目录下的configuration_chatglm模块导入ChatGLMConfig类，这是特定于ChatGLM模型的配置类
 
 
-# flags required to enable jit fusion kernels
+# flags required to enable jit fusion kernels  # 启用JIT（Just-In-Time）编译器的融合内核所需的标志
 
-if sys.platform != 'darwin':
-    torch._C._jit_set_profiling_mode(False)
-    torch._C._jit_set_profiling_executor(False)
-    torch._C._jit_override_can_fuse_on_cpu(True)
-    torch._C._jit_override_can_fuse_on_gpu(True)
+if sys.platform != 'darwin':  # 检查当前操作系统是否不是'darwin'。'darwin'通常代表Mac OS X系统。
+    torch._C._jit_set_profiling_mode(False)  # 设置PyTorch JIT编译器的性能分析模式为False，禁用性能分析。
+    torch._C._jit_set_profiling_executor(False)  # 设置PyTorch JIT编译器的执行器的性能分析模式为False，禁用性能分析。
+    torch._C._jit_override_can_fuse_on_cpu(True)  # 允许JIT编译器在CPU上进行操作融合，即将多个操作合并为一个操作，以提高计算效率。
+    torch._C._jit_override_can_fuse_on_gpu(True)  # 允许JIT编译器在GPU上进行操作融合，提高计算效率。
 
-logger = logging.get_logger(__name__)
+logger = logging.get_logger(__name__)  # 创建一个日志记录器实例，名字是当前模块的名字。
 
-_CHECKPOINT_FOR_DOC = "THUDM/ChatGLM2-6B"
-_CONFIG_FOR_DOC = "ChatGLM6BConfig"
+_CHECKPOINT_FOR_DOC = "THUDM/ChatGLM2-6B"  # 定义一个变量，用于存储预训练模型的checkpoint名称。
+_CONFIG_FOR_DOC = "ChatGLM6BConfig"  # 定义一个变量，用于存储预训练模型的配置类的名称。
 
 CHATGLM_6B_PRETRAINED_MODEL_ARCHIVE_LIST = [
     "THUDM/chatglm2-6b",
-    # See all ChatGLM models at https://huggingface.co/models?filter=chatglm
+    # See all ChatGLM models at https://huggingface.co/models?filter=chatglm  # 列表中包含了预训练模型的名称
 ]
 
 
-def default_init(cls, *args, **kwargs):
-    return cls(*args, **kwargs)
+def default_init(cls, *args, **kwargs):  # 定义一个函数，函数名为default_init。接收一个类（cls）、一个参数列表（*args）和一个关键字参数字典（**kwargs）。
+    return cls(*args, **kwargs)  # 初始化类cls的一个实例，并返回这个实例。
 
+class InvalidScoreLogitsProcessor(LogitsProcessor):  # 定义一个类，类名为InvalidScoreLogitsProcessor，继承了LogitsProcessor类。
 
-class InvalidScoreLogitsProcessor(LogitsProcessor):
-    def __call__(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
-        if torch.isnan(scores).any() or torch.isinf(scores).any():
+    def __call__(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:  # 定义类InvalidScoreLogitsProcessor的方法，方法名为__call__。接收self（类的实例自身）、input_ids（输入的ID，为长整型Tensor）和scores（分数，为浮点型Tensor）。返回值也是浮点型Tensor。
+        if torch.isnan(scores).any() or torch.isinf(scores).any():  # 如果scores中有任何值是NaN（Not a Number）或者是无穷大或无穷小，那么将scores中的所有元素都设置为0，然后将其第5个元素设置为5e4（50000）。
             scores.zero_()
             scores[..., 5] = 5e4
-        return scores
+        return scores  # 将处理后的scores返回。
+
 
 
 class PrefixEncoder(torch.nn.Module):
