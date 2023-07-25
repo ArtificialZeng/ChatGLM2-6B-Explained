@@ -60,36 +60,43 @@ class InvalidScoreLogitsProcessor(LogitsProcessor):  # 定义一个类，类名�
 
 
 
-class PrefixEncoder(torch.nn.Module):
+class PrefixEncoder(torch.nn.Module):  # 定义一个名为PrefixEncoder的类，它继承自torch.nn.Module，这是PyTorch中所有神经网络模块的基类。
     """
     The torch.nn model to encode the prefix
     Input shape: (batch-size, prefix-length)
     Output shape: (batch-size, prefix-length, 2*layers*hidden)
-    """
+    """  # 这是一个多行注释，解释了这个类的主要功能，以及其输入和输出的形状。
 
-    def __init__(self, config: ChatGLMConfig):
-        super().__init__()
-        self.prefix_projection = config.prefix_projection
-        if self.prefix_projection:
+    def __init__(self, config: ChatGLMConfig):  # 定义了这个类的初始化方法。它接收一个名为config的参数，该参数是ChatGLMConfig类的一个实例。
+        super().__init__()  # 这行代码调用父类的初始化方法，确保父类的构造函数被正确地执行。
+        self.prefix_projection = config.prefix_projection  # 从配置对象中取出prefix_projection值，并保存到这个类的实例中。
+
+        if self.prefix_projection:  # 这行代码检查self.prefix_projection的值是否为真。如果为真，则执行以下的代码块。
             # Use a two-layer MLP to encode the prefix
-            kv_size = config.num_layers * config.kv_channels * config.multi_query_group_num * 2
-            self.embedding = torch.nn.Embedding(config.pre_seq_len, kv_size)
-            self.trans = torch.nn.Sequential(
+            kv_size = config.num_layers * config.kv_channels * config.multi_query_group_num * 2  # 这行代码计算了kv_size的值，这是关键值对的大小。
+            self.embedding = torch.nn.Embedding(config.pre_seq_len, kv_size)  # 这行代码定义了一个嵌入层，嵌入层的输入大小是config.pre_seq_len，输出大小是kv_size。
+
+            self.trans = torch.nn.Sequential(  # 这行代码定义了一个序列模型，它包含两个线性层和一个双曲正切激活函数。
                 torch.nn.Linear(kv_size, config.hidden_size),
                 torch.nn.Tanh(),
                 torch.nn.Linear(config.hidden_size, kv_size)
             )
-        else:
+        else:  # 如果self.prefix_projection为假，那么就会执行这个代码块。
             self.embedding = torch.nn.Embedding(config.pre_seq_len,
-                                                config.num_layers * config.kv_channels * config.multi_query_group_num * 2)
+                                                config.num_layers * config.kv_channels * config.multi_query_group_num * 2)  # 定义一个嵌入层，输入大小是config.pre_seq_len，输出大小是config.num_layers * config.kv_channels * config.multi_query_group_num * 2。
 
-    def forward(self, prefix: torch.Tensor):
-        if self.prefix_projection:
-            prefix_tokens = self.embedding(prefix)
-            past_key_values = self.trans(prefix_tokens)
-        else:
-            past_key_values = self.embedding(prefix)
-        return past_key_values
+   
+    def forward(self, prefix: torch.Tensor):  # 定义了PrefixEncoder类的forward方法。这个方法接收一个名为prefix的参数，类型为torch.Tensor，这是PyTorch中张量的类型。
+
+        if self.prefix_projection:  # 这行代码检查self.prefix_projection的值是否为真。如果为真，则执行以下的代码块。
+            prefix_tokens = self.embedding(prefix)  # 这行代码通过将prefix传递给嵌入层，将前缀转化为嵌入向量，并将结果保存到prefix_tokens。
+            past_key_values = self.trans(prefix_tokens)  # 这行代码通过将prefix_tokens传递给self.trans，将嵌入向量转化为past_key_values，self.trans是一个前面定义的线性模型。
+
+        else:  # 如果self.prefix_projection为假，那么就会执行这个代码块。
+            past_key_values = self.embedding(prefix)  # 这行代码通过将prefix传递给嵌入层，将前缀转化为past_key_values。
+
+        return past_key_values  # 返回past_key_values，这是模型的输出。
+
 
 
 def split_tensor_along_last_dim(
