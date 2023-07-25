@@ -1,3 +1,15 @@
+""" PyTorch ChatGLM model. """
+
+import math
+import copy
+import warnings
+import re
+import sys
+
+import torch
+import torch.utils.checkpoint
+import torch.nn.functional as F
+from torch import nn
 from torch.nn import CrossEntropyLoss, LayerNorm  # 从PyTorch的神经网络(nn)模块导入CrossEntropyLoss（损失函数）和LayerNorm（层标准化方法）
 from torch.nn.utils import skip_init  # 从PyTorch的神经网络的工具(nn.utils)模块导入skip_init，一种跳过权重初始化的实用函数
 from typing import Optional, Tuple, Union, List, Callable, Dict, Any  # 导入typing模块的子模块，用于定义变量、函数参数、返回值等的类型
