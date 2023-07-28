@@ -17,7 +17,9 @@ ChatGLM2-6B-相关代码，逐行详解版。
     * [main.py](./ptuning/main.py)
     * [train.sh参数解释](./ptuning/train.sh) 
   * [x.py](./src/train_sft.py)
-* [/configuration_chatglm.py](./chatglm2PT/configuration_chatglm.py)  这段代码定义了一个名为ChatGLMConfig的类，用于配置和管理ChatGLM模型。
+* [chatglm2PT](./chatglm2PT)
+  * [/configuration_chatglm.py](./chatglm2PT/configuration_chatglm.py)  这段代码定义了一个名为ChatGLMConfig的类，用于配置和管理ChatGLM模型。
+  * [/modelling_chatglm.py](./chatglm2PT/configuration_chatglm.py)
 * 
 * [x/](./examples)
   * [x.md](./examples/ads_generation.md)
