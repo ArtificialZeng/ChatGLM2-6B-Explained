@@ -34,7 +34,7 @@ class ChatGLMConfig(PretrainedConfig):
         pre_seq_len=None,  # 定义预序列长度，默认为None
         prefix_projection=False,  # 定义是否应用前缀投影，默认为False
         **kwargs  # 接收其他以关键字方式给出的参数
-    ):
+    ):   #这段代码定义了一个名为ChatGLMConfig的类，用于配置和管理ChatGLM模型。
         
         
         self.num_layers = num_layers
